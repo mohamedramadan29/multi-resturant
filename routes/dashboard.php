@@ -7,7 +7,8 @@ use App\Http\Controllers\dashboard\auth\AuthController;
 use App\Http\Controllers\dashboard\NotificationController;
 use App\Http\Controllers\dashboard\auth\ResetPasswordController;
 use App\Http\Controllers\dashboard\auth\ForgetPasswordController;
-
+use App\Http\Controllers\dashboard\CategoriesController;
+use App\Http\Controllers\dashboard\ResturantController;
 
 Route::group([
     'prefix' => '/dashboard',
@@ -67,7 +68,7 @@ Route::group([
         ##################### End Role Permissions #########################
 
         ##################### Start Admins Routes #########################
-        Route::group(['middleware' => 'can:admins', 'prefix' => 'admins', 'as' => 'admins.'], function () {
+        Route::group(['middleware' => 'can:superadmin', 'prefix' => 'admins', 'as' => 'admins.'], function () {
             Route::controller(AdminController::class)->group(function () {
                 Route::get('index', 'index')->name('index');
                 Route::get('tech', 'tech')->name('tech');
@@ -83,7 +84,7 @@ Route::group([
 
         ##################### Start Resturant Routes #########################
         Route::group(['middleware' => 'can:superadmin', 'prefix' => 'resturants', 'as' => 'resturants.'], function () {
-            Route::controller(AdminController::class)->group(function () {
+            Route::controller(ResturantController::class)->group(function () {
                 Route::get('index', 'index')->name('index');
                 Route::match(['get', 'post'], 'create', 'create')->name('create');
                 Route::match(['post', 'get'], 'update/{id}', 'update')->name('update');
@@ -91,6 +92,19 @@ Route::group([
             });
         });
         ################### End Resturant Routes ###########################
+
+
+        ##################### Start Resturant Routes #########################
+        Route::group(['middleware' => 'can:admin', 'prefix' => 'categories', 'as' => 'categories.'], function () {
+            Route::controller(CategoriesController::class)->group(function () {
+                Route::get('index', 'index')->name('index');
+                Route::match(['get', 'post'], 'create', 'create')->name('create');
+                Route::match(['post', 'get'], 'update/{id}', 'update')->name('update');
+                Route::post('destroy/{id}', 'destroy')->name('destroy');
+            });
+        });
+        ################### End Resturant Routes ###########################
+
 
         ################ Start Notification Controller ############
         Route::controller(NotificationController::class)->group(function () {
@@ -101,6 +115,3 @@ Route::group([
 
 
 });
-
-
-?>

@@ -7,6 +7,7 @@ use App\Http\Traits\Slug_Trait;
 use App\Models\dashboard\Admin;
 use App\Http\Traits\Message_Trait;
 use App\Http\Traits\Upload_Images;
+use Illuminate\Support\Facades\DB;
 use App\Models\dashboard\Resturant;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
@@ -54,27 +55,32 @@ class ResturantController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
+            DB::beginTransaction();
 
             $restaurant = new Resturant();
             $restaurant->name = $data['name'];
-            $restaurant->slug = $data['slug'];
+            $restaurant->slug = $slug;
             $restaurant->owner_id = $data['owner_id'];
             $restaurant->email = $data['email'];
             $restaurant->phone = $data['phone'];
             $restaurant->address = $data['address'];
             $restaurant->description = $data['description'];
             $restaurant->status = $data['status'];
+            $restaurant->logo = '';
             $restaurant->save();
             $restaurantId = $restaurant->id;
             ######### Logo
             if ($request->hasFile('logo')) {
-                $filename = $this->saveImage($request->file('logo'), public_path(asset('assets/uploads/' . $restaurantId . 'logo/')));
+                $filename = $this->saveImage($request->file('logo'), public_path('assets/uploads/' . $restaurantId . '/'.'logo/'));
             }
             $restaurant->logo = $filename;
             $restaurant->save();
+            DB::commit();
             return $this->success_message(' تم اضافة المطعم بنجاح ');
         }
-        $admins = Admin::where('type', "!=", 'superadmin')->get();
+        $admins = Admin::where('type', '!=', 'superadmin')->
+            orWhereNull('type')->get();
+      // dd($admins);
         return view('dashboard.resturants.create', compact('admins'));
     }
 

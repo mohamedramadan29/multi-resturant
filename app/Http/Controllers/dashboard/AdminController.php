@@ -32,7 +32,7 @@ class AdminController extends Controller
                 'password' => 'required',
                 'password_confirmation' => 'required|same:password',
                 'role_id' => 'required',
-                'type' => 'required',
+                'type' => 'nullable',
             ];
             $messages = [
                 'name.required' => 'من فضلك ادخل اسم المستخدم ',
@@ -45,7 +45,6 @@ class AdminController extends Controller
                 'password_confirmation.required' => 'من فضلك ادخل تاكيد كلمة المرور ',
                 'password_confirmation.same' => 'كلمة المرور غير متطابقة ',
                 'role_id.required' => 'من فضلك ادخل صلاحيات المستخدم ',
-                'type.required' => 'من فضلك ادخل نوع المستخدم ',
             ];
             $validator = Validator::make($data, $rules, $messages);
             if ($validator->fails()) {
@@ -58,7 +57,6 @@ class AdminController extends Controller
             $admin->password = Hash::make($data['password']);
             $admin->role_id = $data['role_id'];
             $admin->status = $data['status'];
-            $admin->type = $data['type'];
             $admin->save();
             return $this->success_message('تم اضافة المستخدم بنجاح');
         }
@@ -76,7 +74,7 @@ class AdminController extends Controller
                 'email' => 'required|email|unique:admins,email,' . $admin->id,
                 'phone' => 'required|unique:admins,phone,' . $admin->id,
                 'role_id' => 'required',
-                'type' => 'required',
+                'type' => 'nullable',
             ];
             $messages = [
                 'name.required' => 'من فضلك ادخل اسم المستخدم ',
@@ -86,7 +84,6 @@ class AdminController extends Controller
                 'phone.required' => 'من فضلك ادخل رقم الهاتف ',
                 'phone.unique' => ' رقم الهاتف مستخدم من قبل  ',
                 'role_id.required' => 'من فضلك ادخل صلاحيات المستخدم ',
-                'type.required' => 'من فضلك ادخل نوع المستخدم ',
             ];
 
             if (isset($data['password']) && $data['password'] != null) {
@@ -99,7 +96,6 @@ class AdminController extends Controller
                     'password_confirmation.required' => 'من فضلك ادخل تاكيد كلمة المرور ',
                     'password_confirmation.same' => 'كلمة المرور غير متطابقة ',
                 ];
-
                 $admin->password = Hash::make($data['password']);
                 $admin->save();
             }
@@ -111,7 +107,6 @@ class AdminController extends Controller
             $admin->email = $data['email'];
             $admin->phone = $data['phone'];
             $admin->role_id = $data['role_id'];
-            $admin->type = $data['type'];
             $admin->status = $data['status'];
             $admin->save();
             return $this->success_message('تم تعديل المستخدم بنجاح');
@@ -122,27 +117,12 @@ class AdminController extends Controller
     }
     public function destroy($id)
     {
-
         $admin = Admin::find($id);
         if ($admin->id == 1) {
             return $this->Error_message('لا يمكن حذف المستخدم المدير');
         }
         $admin->delete();
         return $this->success_message('تم حذف المستخدم بنجاح');
-    }
-
-
-    public function update_tech(Request $request, $id)
-    {
-        $data = $request->all();
-        $admin = Admin::find($id);
-        if (!$admin) {
-            return $this->Error_message('لا يوجد مستخدم بهذا الرقم');
-        }
-        $admin->device_nums = $data['device_nums'];
-        $admin->problems = json_encode($data['problems']);
-        $admin->save();
-        return $this->success_message('تم تعديل الصلاحيات بنجاح');
     }
 
 }

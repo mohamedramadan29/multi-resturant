@@ -1,21 +1,21 @@
 @extends('dashboard.layouts.app')
 
-@section('title', ' اضافة موظف جديد ')
+@section('title', ' اضافة اداري جديد ')
 
 @section('content')
     <div class="app-content content">
         <div class="content-wrapper">
             <div class="content-header row">
                 <div class="mb-2 content-header-left col-md-6 col-12 breadcrumb-new">
-                    <h3 class="mb-0 content-header-title d-inline-block"> الموظفين </h3>
+                    <h3 class="mb-0 content-header-title d-inline-block"> الادارين </h3>
                     <div class="row breadcrumbs-top d-inline-block">
                         <div class="breadcrumb-wrapper col-12">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('dashboard.welcome') }}">الرئيسية </a>
                                 </li>
-                                <li class="breadcrumb-item"><a href="{{ route('dashboard.admins.index') }}"> الموظفين </a>
+                                <li class="breadcrumb-item"><a href="{{ route('dashboard.admins.index') }}"> الادارين </a>
                                 </li>
-                                <li class="breadcrumb-item active"><a href="#"> اضافة موظف جديد </a>
+                                <li class="breadcrumb-item active"><a href="#"> اضافة اداري جديد </a>
                                 </li>
                             </ol>
                         </div>
@@ -30,7 +30,7 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <div class="card-header">
-                                    <h4 class="card-title" id="basic-layout-form"> اضافة موظف جديد </h4>
+                                    <h4 class="card-title" id="basic-layout-form"> اضافة اداري جديد </h4>
                                     <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
 
                                 </div>
@@ -83,7 +83,8 @@
                                                     <div class="col-md-6">
                                                         <div class="form-group">
                                                             <label for="role_id"> حدد الصلاحية </label>
-                                                            <select required name="role_id" id="" class="form-control">
+                                                            <select required name="role_id" id=""
+                                                                class="form-control">
                                                                 <option value="" disabled selected> -- حدد الصلاحية --
                                                                 </option>
                                                                 @foreach ($roles as $role)
@@ -97,20 +98,10 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="type"> نوع الموظف </label>
-                                                            <select required name="type" id="" class="form-control">
-                                                                <option value="" disabled selected> -- حدد النوع  --
-                                                                </option>
-                                                                <option value="فني">فني</option>
-                                                                <option value="استقبال">استقبال</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="status"> حالة الموظف  </label>
-                                                            <select required name="status" id="" class="form-control">
-                                                                <option value="" disabled selected> -- حدد الحالة  --
+                                                            <label for="status"> حالة الاداري </label>
+                                                            <select required name="status" id=""
+                                                                class="form-control">
+                                                                <option value="" disabled selected> -- حدد الحالة --
                                                                 </option>
                                                                 <option value="1">فعال</option>
                                                                 <option value="0">غير فعال</option>

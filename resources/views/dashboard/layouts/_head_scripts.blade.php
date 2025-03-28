@@ -32,8 +32,9 @@
     <!-- END Page Level CSS-->
     <!-- BEGIN Custom CSS-->
     <link rel="stylesheet" type="text/css" href="../../../assets/css/style-rtl.css">
-   @yield('css')
     @toastifyCss
+    @yield('css')
+
     <!-- END Custom CSS-->
 </head>
 <body class="vertical-layout vertical-menu 2-columns menu-expanded fixed-navbar"

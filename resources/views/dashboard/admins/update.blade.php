@@ -1,21 +1,21 @@
 @extends('dashboard.layouts.app')
 
-@section('title', ' تعديل موظف ')
+@section('title', ' تعديل اداري ')
 
 @section('content')
     <div class="app-content content">
         <div class="content-wrapper">
             <div class="content-header row">
                 <div class="mb-2 content-header-left col-md-6 col-12 breadcrumb-new">
-                    <h3 class="mb-0 content-header-title d-inline-block"> الموظفين </h3>
+                    <h3 class="mb-0 content-header-title d-inline-block"> الادارين </h3>
                     <div class="row breadcrumbs-top d-inline-block">
                         <div class="breadcrumb-wrapper col-12">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('dashboard.welcome') }}">الرئيسية </a>
                                 </li>
-                                <li class="breadcrumb-item"><a href="{{ route('dashboard.admins.index') }}"> الموظفين </a>
+                                <li class="breadcrumb-item"><a href="{{ route('dashboard.admins.index') }}"> الادارين </a>
                                 </li>
-                                <li class="breadcrumb-item active"><a href="#"> تعديل موظف </a>
+                                <li class="breadcrumb-item active"><a href="#"> تعديل الاداري </a>
                                 </li>
                             </ol>
                         </div>
@@ -95,26 +95,15 @@
                                                     </div>
                                                     <div class="col-md-6">
                                                         <div class="form-group">
-                                                            <label for="type"> نوع الموظف </label>
-                                                            <select required name="type" id=""
+                                                            <label for="status"> حالة الاداري </label>
+                                                            <select required name="status" id=""
                                                                 class="form-control">
-                                                                <option value="" disabled selected> -- حدد النوع --
+                                                                <option value="" disabled selected> -- حدد الحالة --
                                                                 </option>
-                                                                <option {{ $admin->type == 'فني' ? 'selected' : '' }}
-                                                                    value="فني">فني</option>
-                                                                <option {{ $admin->type == 'استقبال' ? 'selected' : '' }}
-                                                                    value="استقبال">استقبال</option>
-                                                            </select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-6">
-                                                        <div class="form-group">
-                                                            <label for="status"> حالة الموظف  </label>
-                                                            <select required name="status" id="" class="form-control">
-                                                                <option value="" disabled selected> -- حدد الحالة  --
-                                                                </option>
-                                                                <option {{ $admin->status == 1 ? 'selected' : '' }} value="1">فعال</option>
-                                                                <option {{ $admin->status == 0 ? 'selected' : '' }} value="0">غير فعال</option>
+                                                                <option {{ $admin->status == 1 ? 'selected' : '' }}
+                                                                    value="1">فعال</option>
+                                                                <option {{ $admin->status == 0 ? 'selected' : '' }}
+                                                                    value="0">غير فعال</option>
                                                             </select>
                                                         </div>
                                                     </div>
