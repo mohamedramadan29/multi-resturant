@@ -3,7 +3,8 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
+use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Gate;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -19,6 +20,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // تشغيل الوظيفة فور تشغيل التطبيق (للاختبار فقط)
+        // dispatch(new \App\Jobs\CheckInvoiceDeliveryJob);
+        Paginator::useBootstrap();
+        foreach (config('permissions') as $config_permission => $value) {
+            Gate::define($config_permission, function ($auth) use ($config_permission) {
+                return $auth->hasAccess($config_permission);
+            });
+        }
+        // $this->callAfterResolving(Schedule::class, function (Schedule $schedule) {
+        //     $schedule->job(new CheckInvoiceDeliveryJob)->everySecond();
+        // });
     }
 }
