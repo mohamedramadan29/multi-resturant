@@ -60,6 +60,37 @@
                       </ul>
                   </li>
               @endcan
+              @can('admin')
+              <li class="nav-item{{ Route::is('dashboard.products.*') ? 'active' : '' }}"><a href="#"><i
+                          class="la la-list"></i><span class="menu-title" data-i18n="nav.users.main"> ادارة  المنتجات
+                      </span></a>
+                  <ul class="menu-content">
+                      <li class="{{ Route::is('dashboard.products.index') ? 'active' : '' }}">
+                          <a class="menu-item" href="{{ route('dashboard.products.index') }}"
+                              data-i18n="nav.users.user_profile">   المنتجات
+                          </a>
+                      </li>
+
+                      <li class="{{ Route::is('dashboard.products.create') ? 'active' : '' }}">
+                          <a class="menu-item" href="{{ route('dashboard.products.create') }}"
+                              data-i18n="nav.users.user_cards"> اضافة منتج جديد </a>
+                      </li>
+                  </ul>
+              </li>
+          @endcan
+          @can('admin')
+          <li class="nav-item{{ Route::is('dashboard.orders.*') ? 'active' : '' }}"><a href="#"><i
+                      class="la la-list"></i><span class="menu-title" data-i18n="nav.users.main"> ادارة الطلبات
+                  </span></a>
+              <ul class="menu-content">
+                  <li class="{{ Route::is('dashboard.orders.index') ? 'active' : '' }}">
+                      <a class="menu-item" href="{{ route('dashboard.orders.index') }}"
+                          data-i18n="nav.users.user_profile">   الطلبات
+                      </a>
+                  </li>
+              </ul>
+          </li>
+      @endcan
               @can('roles')
                   <li class="nav-item {{ Route::is('dashboard.roles.*') ? 'active' : '' }}"><a href="#"><i
                               class="la la-television"></i><span class="menu-title" data-i18n="nav.role.main"> الصلاحيات

@@ -32,7 +32,7 @@
                                 <div class="card-header">
                                     <h4 class="card-title" id="basic-layout-form"> اضافة صلاحية جديدة </h4>
                                     <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i></a>
-                                  
+
                                 </div>
                                 <div class="card-content collapse show">
                                     <div class="card-body">

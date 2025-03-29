@@ -8,9 +8,11 @@ use App\Models\dashboard\Product;
 use App\Http\Traits\Message_Trait;
 use App\Http\Traits\Upload_Images;
 use App\Models\dashboard\Category;
-use App\Http\Controllers\Controller;
 use App\Models\dashboard\Resturant;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+
 class CategoriesController extends Controller
 {
     use Message_Trait;
@@ -18,7 +20,13 @@ class CategoriesController extends Controller
     use Upload_Images;
     public function index()
     {
-        $categories = Category::with('Resturant')->orderby('id', 'desc')->get();
+        $admin = Auth::guard('admin')->user();
+        if ($admin->role_id == 1) {
+            $categories = Category::with('Resturant')->orderby('id', 'desc')->get();
+        } else {
+            $categories = Category::with('Resturant')->where('resturant_id', $admin['resturant_id'])->orderby('id', 'desc')->get();
+        }
+
         return view('dashboard.MainCategory.index', compact('categories'));
     }
     public function create(Request $request)

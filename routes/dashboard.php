@@ -1,4 +1,6 @@
 <?php
+use App\Http\Controllers\dashboard\OrderController;
+use App\Http\Controllers\dashboard\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\dashboard\AdminController;
 use App\Http\Controllers\dashboard\RolesController;
@@ -9,6 +11,7 @@ use App\Http\Controllers\dashboard\auth\ResetPasswordController;
 use App\Http\Controllers\dashboard\auth\ForgetPasswordController;
 use App\Http\Controllers\dashboard\CategoriesController;
 use App\Http\Controllers\dashboard\ResturantController;
+use App\Models\dashboard\Product;
 
 Route::group([
     'prefix' => '/dashboard',
@@ -104,6 +107,29 @@ Route::group([
             });
         });
         ################### End Resturant Routes ###########################
+
+
+        ##################### Start Product  Routes #########################
+        Route::group(['middleware' => 'can:admin', 'prefix' => 'products', 'as' => 'products.'], function () {
+            Route::controller(ProductController::class)->group(function () {
+                Route::get('index', 'index')->name('index');
+                Route::match(['get', 'post'], 'create', 'create')->name('create');
+                Route::match(['post', 'get'], 'update/{id}', 'update')->name('update');
+                Route::post('destroy/{id}', 'destroy')->name('destroy');
+            });
+        });
+        ################### End Product  Routes ###########################
+
+        ##################### Start Product  Routes #########################
+        Route::group(['middleware' => 'can:admin', 'prefix' => 'orders', 'as' => 'orders.'], function () {
+            Route::controller(OrderController::class)->group(function () {
+                Route::get('index', 'index')->name('index');
+                Route::match(['get', 'post'], 'create', 'create')->name('create');
+                Route::match(['post', 'get'], 'update/{id}', 'update')->name('update');
+                Route::post('destroy/{id}', 'destroy')->name('destroy');
+            });
+        });
+        ################### End Product  Routes ###########################
 
 
         ################ Start Notification Controller ############
