@@ -22,4 +22,9 @@ class Resturant extends Model
     {
         return $this->belongsTo(Admin::class, 'owner_id');
     }
+
+    public function getLogo()
+    {
+        return asset('assets/uploads/' . $this->id . '/' . 'logo/' . $this->logo);
+    }
 }

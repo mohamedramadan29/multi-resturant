@@ -20,7 +20,7 @@ class ResturantController extends Controller
     use Upload_Images;
     public function index()
     {
-        $resturants = Resturant::orderBy("created_at", "desc")->paginate(10);
+        $resturants = Resturant::with('Owner')->orderBy("created_at", "desc")->paginate(10);
         return view('dashboard.resturants.index', compact('resturants'));
     }
 
@@ -71,7 +71,7 @@ class ResturantController extends Controller
             $restaurantId = $restaurant->id;
             ######### Logo
             if ($request->hasFile('logo')) {
-                $filename = $this->saveImage($request->file('logo'), public_path('assets/uploads/' . $restaurantId . '/'.'logo/'));
+                $filename = $this->saveImage($request->file('logo'), public_path('assets/uploads/' . $restaurantId . '/' . 'logo/'));
             }
             $restaurant->logo = $filename;
             $restaurant->save();
@@ -80,7 +80,7 @@ class ResturantController extends Controller
         }
         $admins = Admin::where('type', '!=', 'superadmin')->
             orWhereNull('type')->get();
-      // dd($admins);
+        // dd($admins);
         return view('dashboard.resturants.create', compact('admins'));
     }
 
@@ -120,7 +120,7 @@ class ResturantController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             $restaurant->name = $data['name'];
-            $restaurant->slug = $data['slug'];
+            //  $restaurant->slug = $data['slug'];
             $restaurant->owner_id = $data['owner_id'];
             $restaurant->email = $data['email'];
             $restaurant->phone = $data['phone'];
@@ -132,21 +132,23 @@ class ResturantController extends Controller
             ######### Logo
             if ($request->hasFile('logo')) {
                 ##### Delete Old Image
-                $oldLogo = public_path(asset('assets/uploads/' . $restaurant->id . 'logo/' . $restaurant['logo']));
+                $oldLogo = 'assets/uploads/' . $restaurant->id . '/' . 'logo/' . $restaurant['logo'];
+                //dd($oldLogo);
                 if (file_exists($oldLogo)) {
                     @unlink($oldLogo);
                 }
-                $filename = $this->saveImage($request->file('logo'), public_path(asset('assets/uploads/' . $restaurantId . 'logo/')));
+                $filename = $this->saveImage($request->file('logo'), public_path('assets/uploads/' . $restaurantId . '/' . 'logo/'));
                 $restaurant->logo = $filename;
                 $restaurant->save();
             }
-            return $this->success_message(' تم اضافة المطعم بنجاح ');
+            return $this->success_message(' تم نعديل بيانات المطعم بنجاح ');
         }
-        $admins = Admin::where('type', "!=", 'superadmin')->get();
-        return view('dashboard.resturants.create', compact('admins'));
+        $admins = Admin::where('type', "!=", 'superadmin')
+            ->orWhereNull('type')->get();
+        return view('dashboard.resturants.update', compact('admins', 'restaurant'));
     }
 
-    public function delete($id)
+    public function destroy($id)
     {
         $restaurant = Resturant::find($id);
         if (!$restaurant) {
@@ -154,13 +156,12 @@ class ResturantController extends Controller
         }
         ######### Delete All Files
         $restaurantId = $restaurant->id;
-        $restaurantFolder = public_path(asset('assets/uploads/' . $restaurantId));
+        $restaurantFolder = public_path('assets/uploads/' . $restaurantId);
         $restaurant->delete();
         // حذف المجلد إذا كان موجودًا
         if (File::exists($restaurantFolder)) {
             File::deleteDirectory($restaurantFolder);
         }
-
         return $this->success_message(' تم حذف المطعم بنجاح ');
 
 

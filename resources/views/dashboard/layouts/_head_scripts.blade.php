@@ -5,10 +5,8 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui">
-    <meta name="description"
-        content=" بصمة الاهتمام للاتصالات  ">
-    <meta name="keywords"
-        content=" بصمة الاهتمام للاتصالات ">
+    <meta name="description" content=" بصمة الاهتمام للاتصالات  ">
+    <meta name="keywords" content=" بصمة الاهتمام للاتصالات ">
     <meta name="author" content="Mohamed Ramadan +201011642731">
     <title> @yield('title')
     </title>
@@ -30,6 +28,12 @@
         href="{{ asset('assets/admin/') }}/css-rtl/core/menu/menu-types/vertical-menu.css">
     <link rel="stylesheet" type="text/css" href="{{ asset('assets/admin/') }}/css-rtl/core/colors/palette-gradient.css">
     <!-- END Page Level CSS-->
+    <!-- Start File Input  -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.min.css"
+        crossorigin="anonymous">
+    <!-- the fileinput plugin styling CSS file -->
+    <link href="https://cdn.jsdelivr.net/gh/kartik-v/bootstrap-fileinput@5.5.4/css/fileinput.min.css" media="all"
+        rel="stylesheet" type="text/css" />
     <!-- BEGIN Custom CSS-->
     <link rel="stylesheet" type="text/css" href="../../../assets/css/style-rtl.css">
     @toastifyCss
@@ -37,6 +41,7 @@
 
     <!-- END Custom CSS-->
 </head>
-<body class="vertical-layout vertical-menu 2-columns menu-expanded fixed-navbar"
-data-open="click" data-menu="vertical-menu" data-col="2-columns">
-  <!-- fixed-top-->
+
+<body class="vertical-layout vertical-menu 2-columns menu-expanded fixed-navbar" data-open="click"
+    data-menu="vertical-menu" data-col="2-columns">
+    <!-- fixed-top-->

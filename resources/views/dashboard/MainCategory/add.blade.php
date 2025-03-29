@@ -1,6 +1,6 @@
 @extends('dashboard.layouts.app')
 @section('title')
-    اضافة قسم
+    اضافة تصنيف جديد
 @endsection
 @section('css')
     <!-- default icons used in the plugin are from Bootstrap 5.x icon library (which can be enabled by loading CSS below) -->
@@ -16,16 +16,16 @@
         <div class="content-wrapper">
             <div class="content-header row">
                 <div class="mb-2 content-header-left col-md-6 col-12 breadcrumb-new">
-                    <h3 class="mb-0 content-header-title d-inline-block"> اضافة مطعم جديد </h3>
+                    <h3 class="mb-0 content-header-title d-inline-block"> اضافة تصنيف جديد </h3>
                     <div class="row breadcrumbs-top d-inline-block">
                         <div class="breadcrumb-wrapper col-12">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="{{ route('dashboard.welcome') }}">الرئيسية </a>
                                 </li>
-                                <li class="breadcrumb-item"><a href="{{ route('dashboard.resturants.index') }}"> المطاعم
+                                <li class="breadcrumb-item"><a href="{{ route('dashboard.resturants.index') }}"> التصنيفات
                                     </a>
                                 </li>
-                                <li class="breadcrumb-item active"><a href="#"> اضافة مطعم جديد </a>
+                                <li class="breadcrumb-item active"><a href="#"> اضافة تصنيف جديد </a>
                                 </li>
                             </ol>
                         </div>
@@ -46,7 +46,7 @@
                                     @endforeach
                                 @endif
                                 <div class="card-header">
-                                    <h4 class="card-title" id="basic-layout-form"> اضافة مطعم جديد </h4>
+                                    <h4 class="card-title" id="basic-layout-form"> اضافة تصنيف جديد </h4>
                                     <a class="heading-elements-toggle"><i class="la la-ellipsis-v font-medium-3"></i> </a>
                                 </div>
                                 <div class="card-content collapse show">
@@ -56,16 +56,27 @@
                                             @csrf
                                             <div class="form-body">
                                                 <div class="col-xl-12 col-lg-12 ">
-                                                    @if (Session::has('Success_message'))
-                                                        @php
-                                                            toastify()->success(
-                                                                \Illuminate\Support\Facades\Session::get(
-                                                                    'Success_message',
-                                                                ),
-                                                            );
-                                                        @endphp
-                                                    @endif
                                                     <div class="row">
+                                                        @if (Auth::guard('admin')->user()->type == 'superadmin')
+                                                            <div class="col-lg-6">
+                                                                <div class="form-group">
+                                                                    <label for="name" class="form-label"> حدد المطعم
+                                                                    </label>
+                                                                    <select name="resturant_id" id=""
+                                                                        class="form-control">
+                                                                        <option value="" selected disabled> -- حدد
+                                                                            المطعم -- </option>
+                                                                        @foreach ($resturants as $rest)
+                                                                            <option value="{{ $rest['id'] }}">
+                                                                                {{ $rest['name'] }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                        @else
+                                                            <input type="hidden" name="resturant_id"
+                                                                value="{{ Auth::guard('admin')->user()->restaurant_id }}">
+                                                        @endif
                                                         <div class="col-lg-6">
                                                             <div class="form-group">
                                                                 <label for="name" class="form-label"> عنوان
@@ -98,7 +109,7 @@
                                                                 <label for="description" class="form-label"> صورة القسم
                                                                 </label>
                                                                 <input required type="file" class="form-control"
-                                                                    name="image" accept="image/*">
+                                                                    id="single-image" name="image" accept="image/*">
                                                             </div>
                                                         </div>
                                                     </div>

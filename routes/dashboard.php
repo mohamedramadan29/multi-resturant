@@ -112,6 +112,4 @@ Route::group([
         });
         ################ End Notification Controller ##############
     });
-
-
 });

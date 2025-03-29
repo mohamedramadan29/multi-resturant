@@ -44,7 +44,7 @@
               @endcan
               @can('admin')
                   <li class="nav-item{{ Route::is('dashboard.categories.*') ? 'active' : '' }}"><a href="#"><i
-                              class="la la-users"></i><span class="menu-title" data-i18n="nav.users.main"> تصنيفات المنتجات
+                              class="la la-list"></i><span class="menu-title" data-i18n="nav.users.main"> تصنيفات المنتجات
                           </span></a>
                       <ul class="menu-content">
                           <li class="{{ Route::is('dashboard.categories.index') ? 'active' : '' }}">

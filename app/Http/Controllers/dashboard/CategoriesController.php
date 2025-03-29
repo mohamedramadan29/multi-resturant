@@ -9,6 +9,7 @@ use App\Http\Traits\Message_Trait;
 use App\Http\Traits\Upload_Images;
 use App\Models\dashboard\Category;
 use App\Http\Controllers\Controller;
+use App\Models\dashboard\Resturant;
 use Illuminate\Support\Facades\Validator;
 class CategoriesController extends Controller
 {
@@ -17,7 +18,7 @@ class CategoriesController extends Controller
     use Upload_Images;
     public function index()
     {
-        $categories = Category::orderby('id', 'desc')->get();
+        $categories = Category::with('Resturant')->orderby('id', 'desc')->get();
         return view('dashboard.MainCategory.index', compact('categories'));
     }
     public function create(Request $request)
@@ -45,25 +46,27 @@ class CategoriesController extends Controller
                     }
                     /// Upload Admin Photo
                     if ($request->hasFile('image')) {
-                        $file_name = $this->saveImage($request->image, public_path('assets/uploads/category_images'));
+                        $file_name = $this->saveImage($request->image, public_path('assets/uploads/' . $alldata['resturant_id'] . '/category_images'));
                     }
                     $new_category = new Category();
                     $new_category->name = $alldata['name'];
                     $new_category->slug = $this->CustomeSlug($alldata['name']);
                     $new_category->description = $alldata['description'];
                     $new_category->status = $alldata['status'];
+                    $new_category->resturant_id = $alldata['resturant_id'];
                     $new_category->meta_title = $alldata['meta_title'];
                     $new_category->meta_description = $alldata['meta_description'];
                     $new_category->meta_keywords = $alldata['meta_keywords'];
                     $new_category->image = $file_name;
                     $new_category->save();
-                    return $this->success_message(' تمت اضافة القسم بنجاح ');
+                    return $this->success_message(' تمت اضافة التصنيف  بنجاح ');
                 } catch (\Exception $e) {
                     return $this->exception_message($e);
                 }
             }
         }
-        return view('dashboard.MainCategory.add');
+        $resturants = Resturant::where('status', 1)->get();
+        return view('dashboard.MainCategory.add', compact('resturants'));
     }
 
     public function update(Request $request, $id)
@@ -95,11 +98,11 @@ class CategoriesController extends Controller
                 /// Upload Category Image
                 if ($request->hasFile('image')) {
                     ////// Delete Old Image
-                    $old_image = public_path('assets/uploads/category_images/' . $category['image']);
+                    $old_image = 'assets/uploads/' . $category->resturant_id . '/' . 'category_images/' . $category['image'];
                     if (file_exists($old_image)) {
                         @unlink($old_image);
                     }
-                    $file_name = $this->saveImage($request->image, public_path('assets/uploads/category_images'));
+                    $file_name = $this->saveImage($request->image, public_path('assets/uploads/' . $alldata['resturant_id'] . '/category_images'));
                     $category->update([
                         'image' => $file_name,
                     ]);
@@ -108,6 +111,7 @@ class CategoriesController extends Controller
                     "name" => $alldata['name'],
                     "slug" => $this->CustomeSlug($alldata['name']),
                     "description" => $alldata['description'],
+                    "resturant_id" => $alldata['resturant_id'],
                     "status" => $alldata['status'],
                     "meta_title" => $alldata['meta_title'],
                     "meta_description" => $alldata['meta_description'],
@@ -119,11 +123,12 @@ class CategoriesController extends Controller
             }
 
         }
-        return view('dashboard.MainCategory.update', compact('category'));
+        $resturants = Resturant::where('status', 1)->get();
+        return view('dashboard.MainCategory.update', compact('category', 'resturants'));
     }
 
 
-    public function delete($id)
+    public function destroy($id)
     {
         try {
             // Find the main category

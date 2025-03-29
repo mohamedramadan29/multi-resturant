@@ -8,7 +8,7 @@
         <div class="content-wrapper">
             <div class="content-header row">
                 <div class="mb-2 content-header-left col-md-6 col-12 breadcrumb-new">
-                    <h3 class="mb-0 content-header-title d-inline-block"> تصنيفات المنتجات  </h3>
+                    <h3 class="mb-0 content-header-title d-inline-block"> تصنيفات المنتجات </h3>
                     <div class="row breadcrumbs-top d-inline-block">
                         <div class="breadcrumb-wrapper col-12">
                             <ol class="breadcrumb">
@@ -31,7 +31,8 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <a href="{{ route('dashboard.categories.create') }}" class="btn btn-primary"> اضافة تصنيف جديد  </a>
+                                <a href="{{ route('dashboard.categories.create') }}" class="btn btn-primary"> اضافة تصنيف
+                                    جديد </a>
                             </div>
                             <div class="card-content collapse show">
                                 <div class="card-body">
@@ -41,6 +42,9 @@
                                                 <tr>
                                                     <th> # </th>
                                                     <th> اسم القسم</th>
+                                                    @if (Auth::guard('admin')->user()->role_id == 1)
+                                                        <th> المطعم </th>
+                                                    @endif
                                                     <th> الحالة</th>
                                                     <th> الصورة</th>
                                                     <th> العمليات</th>
@@ -54,6 +58,7 @@
                                                             {{ $loop->iteration }}
                                                         </td>
                                                         <td> {{ $category['name'] }} </td>
+                                                        <td> {{ $category['Resturant']['name'] }} </td>
                                                         <td>
                                                             @if ($category['status'] == 1)
                                                                 <span class="badge bg-success"> مفعل </span>
@@ -61,33 +66,24 @@
                                                                 <span class="badge bg-danger"> غير مفعل </span>
                                                             @endif
                                                         </td>
-
                                                         <td>
-                                                            <img class="img-thumbnail"
-                                                                src="{{ asset('assets/uploads/category_images/' . $category['image']) }}"
+                                                            <img class="img-thumbnail" src="{{ $category->getImage() }}"
                                                                 width="80" height="80px" alt="">
                                                         </td>
                                                         <td>
-                                                            <div class="d-flex gap-2">
-                                                                <a href="{{ url('admin/main-category/update/' . $category['id']) }}"
-                                                                    class="btn btn-soft-primary btn-sm">
-                                                                    <iconify-icon icon="solar:pen-2-broken"
-                                                                        class="align-middle fs-18"></iconify-icon>
-                                                                </a>
-                                                                <button type="button" class="btn btn-soft-danger btn-sm"
-                                                                    data-bs-toggle="modal"
-                                                                    data-bs-target="#delete_category_{{ $category['id'] }}">
-                                                                    <iconify-icon
-                                                                        icon="solar:trash-bin-minimalistic-2-broken"
-                                                                        class="align-middle fs-18"></iconify-icon>
-                                                                </button>
-                                                            </div>
+                                                            <a class="btn btn-info btn-sm"
+                                                                href="{{ route('dashboard.categories.update', $category->id) }}"><i
+                                                                    class="la la-edit"></i> تعديل </a>
+                                                            <button type="button" class="btn btn-danger btn-sm"
+                                                                data-toggle="modal"
+                                                                data-target="#delete_categories_{{ $category->id }}">
+                                                                حذف <i class="la la-trash"></i>
+                                                            </button>
                                                         </td>
                                                     </tr>
                                                     <!-- Modal -->
-                                                    @include('admin.MainCategory.delete')
+                                                    @include('dashboard.MainCategory.delete')
                                                 @endforeach
-
                                             </tbody>
                                         </table>
                                     </div>
