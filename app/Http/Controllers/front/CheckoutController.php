@@ -1,39 +1,41 @@
 <?php
 
 namespace App\Http\Controllers\front;
-
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\front\Cart;
 use Illuminate\Http\Request;
+use App\Models\front\Cart;
 use App\Http\Controllers\Controller;
+use App\Models\dashboard\Resturant;
 use Illuminate\Support\Facades\Auth;
-use App\Models\front\UserBranchDetail;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 
 class CheckoutController extends Controller
 {
-    public function checkout()
+    public function checkout(Resturant $restaurant)
     {
-        $cartItems = Cart::getcartitems();
+        $resturant_id = $restaurant->id;
+        $cartItems = Cart::getcartitems($resturant_id);
         if (count($cartItems) > 0) {
-            return view("front.checkout");
+            return view("front.restaurants.checkout");
         } else {
-            return redirect()->route('index');
+            return redirect()->route('restaurant.show', ['restaurant' => $restaurant->slug]);
         }
     }
 
 
     // التحقق من حالة تسجيل الدخول
-    public function checkLoginStatus()
-    {
-        return response()->json(['logged_in' => auth()->check()]);
-    }
+    // public function checkLoginStatus()
+    // {
+    //     return response()->json(['logged_in' => auth()->check()]);
+    // }
 
     // إرسال رمز التحقق إلى الهاتف
-    public function sendVerificationCode(Request $request)
+    public function sendVerificationCode(Request $request, Resturant $restaurant)
     {
+        $resturant_id = $restaurant->id;
+        // dd($resturant_id);
         $phone = $request->input('phone');
         //  dd($phone);
         // إرسال رمز التحقق باستخدام خدمة مثل Twilio (يمكنك إضافة الخدمة هنا)
@@ -42,17 +44,21 @@ class CheckoutController extends Controller
 
         User::updateOrCreate([
             'phone' => $phone,
+            'resturant_id' => $resturant_id
         ], [
             'phone' => $phone,
+            'resturant_id' => $resturant_id,
             // 'verification_code' => $verificationCode,
             // 'expires_at' => Carbon::now()->addMinutes(5)
         ]);
-        $user = User::where('phone', $phone)->first();
+        $user = User::where('phone', $phone)
+            ->where('resturant_id', $resturant_id)
+            ->first();
         if ($user) {
             // إذا كان الرمز صحيحًا ولم تنتهِ صلاحيته
             Auth::login($user); // تسجيل دخول المستخدم
             // تحديث عناصر السلة
-            $cartItems = Cart::getcartitems(); // استدعاء عناصر السلة
+            $cartItems = Cart::getcartitems($resturant_id); // استدعاء عناصر السلة
             // dd($cartItems);
             if (!$cartItems || $cartItems->isEmpty()) {
                 $session_id = Session::get('session_id');
@@ -63,19 +69,9 @@ class CheckoutController extends Controller
                 $cartItem->save(); // حفظ العنصر في قاعدة البيانات
             }
             $session_id = Session::get('session_id');
-            ####### Update User Branch Detail
-            $user_branch = UserBranchDetail::where('session_id', $session_id)->first();
-            $user_old_branch = UserBranchDetail::where('user_id', $user->id)->first();
-            if ($user_old_branch) {
-                $user_old_branch->delete();
-            }
-            if ($user_branch) {
 
-                $user_branch->user_id = $user->id;
-                $user_branch->save();
-            }
             ####### Update User Branch Detail
-            return Redirect::route('checkout');
+            return Redirect::route('checkout', ['restaurant' => $restaurant->slug]);
             // return response()->json(['message' => 'تم إرسال رمز التحقق']);
         }
         // إرسال رسالة عبر API أو أي خدمة
@@ -85,8 +81,9 @@ class CheckoutController extends Controller
     }
 
     // التحقق من الرمز المدخل
-    public function verifyCode(Request $request)
+    public function verifyCode(Request $request, Resturant $resturant)
     {
+        $resturant_id = $resturant->id;
         $phone = $request->input('phone'); // يجب إرسال رقم الهاتف مع الرمز للتحقق منه
         $code = $request->input('code'); // الرمز المدخل
 
@@ -98,7 +95,7 @@ class CheckoutController extends Controller
                 // إذا كان الرمز صحيحًا ولم تنتهِ صلاحيته
                 Auth::login($user); // تسجيل دخول المستخدم
                 // تحديث عناصر السلة
-                $cartItems = Cart::getcartitems(); // استدعاء عناصر السلة
+                $cartItems = Cart::getcartitems($resturant_id); // استدعاء عناصر السلة
                 // dd($cartItems);
                 if (!$cartItems || $cartItems->isEmpty()) {
                     $session_id = Session::get('session_id');

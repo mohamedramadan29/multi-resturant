@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\front;
 
-use App\Http\Controllers\Controller;
-use App\Models\front\Order;
 use Illuminate\Http\Request;
+use App\Models\dashboard\Order;
+use App\Http\Controllers\Controller;
+use App\Models\dashboard\Resturant;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -14,8 +15,8 @@ class UserController extends Controller
         //dd($orders);
         return view("front.user.dashboard",compact("orders"));
     }
-    public function logout(){
+    public function logout(Resturant $restaurant){
         Auth::logout();
-        return redirect()->route('index');
+        return redirect()->route('restaurant.show', ['restaurant' => $restaurant->slug]);;
     }
 }

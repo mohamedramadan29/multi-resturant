@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="POST" action="{{ route('send.verification.code') }}">
+                <form method="POST" action="{{ route('send.verification.code', ['restaurant' => $restaurant->slug]) }}">
                     @csrf
                     <div class="form-group">
                         <label for="phone">رقم الهاتف</label>
@@ -72,12 +72,13 @@
             console.log('clicked');
             // تحقق من تسجيل الدخول عبر AJAX
             $.ajax({
-                url: '{{ route('check.login.status') }}', // راوت للتحقق من حالة تسجيل الدخول
+                url: '{{ route('check.login.status', ['restaurant' => $restaurant->slug]) }}', // راوت للتحقق من حالة تسجيل الدخول
                 method: 'GET',
                 success: function(response) {
                     if (response.logged_in) {
                         // إذا كان المستخدم مسجل الدخول، انتقل إلى صفحة إتمام الطلب
-                        window.location.href = '{{ url('checkout') }}';
+                        window.location.href =
+                            '{{ route('checkout', ['restaurant' => $restaurant->slug]) }}';
                     } else {
                         //   window.location.href = '{{ url('checkout') }}';
                         // إذا لم يكن مسجل الدخول، عرض المودال
@@ -100,7 +101,7 @@
         const phone = $('#phone').val();
 
         $.ajax({
-            url: '{{ route('send.verification.code') }}', // راوت لإرسال رمز التحقق
+            url: '{{ route('send.verification.code', ['restaurant' => $restaurant->slug]) }}', // راوت لإرسال رمز التحقق
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -136,7 +137,7 @@
         const phone = $('#hiddenPhone').val();
 
         $.ajax({
-            url: '{{ route('verify.code') }}', // راوت للتحقق من الرمز
+            url: '{{ route('verify.code', ['restaurant' => $restaurant->slug]) }}', // راوت للتحقق من الرمز
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -162,24 +163,46 @@
 <!-- Footer -->
 <footer id="footer" class="bg-dark dark">
     @php
-        $public_setting = \App\Models\admin\PublicSetting::first();
+        // $public_setting = \App\Models\admin\PublicSetting::first();
     @endphp
     <div class="container">
         <!-- Footer 1st Row -->
         <div class="footer-first-row row">
             <div class="col-lg-3 text-center">
-                <a href="{{ url('/') }}"><img
-                        src="{{ asset('assets/uploads/PublicSetting/' . $public_setting->website_logo) }}"
-                        alt="" width="88" class="mt-5 mb-5" /></a>
+                <a href="{{ url('/') }}"><img src="{{ $resturantsetting->getLogo() }}" alt=""
+                        width="88" class="mt-5 mb-5" /></a>
             </div>
             <div class="col-lg-4 col-md-6">
                 <h5 class="text-muted" style="margin-top: 15px"> تابعنا </h5>
-                <a href="https://www.snapchat.com/add/tragaif"
-                    class="icon icon-social icon-circle icon-sm icon-facebook"><i class="bi bi-snapchat"></i></a>
-                <a href="https://www.tiktok.com/@tragaif?lang=en"
-                    class="icon icon-social icon-circle icon-sm icon-twitter"> <i class="bi bi-tiktok"></i> </a>
-                <a href="https://www.instagram.com/tragaif/"
-                    class="icon icon-social icon-circle icon-sm icon-instagram"><i class="bi bi-instagram"></i></a>
+                @if ($resturantsetting->facebook)
+                    <a href="{{ $resturantsetting->facebook }}"
+                        class="icon icon-social icon-circle icon-sm icon-facebook"><i class="bi bi-facebook"></i></a>
+                @endif
+                @if ($resturantsetting->twitter)
+                    <a href="{{ $resturantsetting->twitter }}"
+                        class="icon icon-social icon-circle icon-sm icon-twitter"><i class="bi bi-twitter"></i></a>
+                @endif
+                @if ($resturantsetting->instagram)
+                    <a href="{{ $resturantsetting->instagram }}"
+                        class="icon icon-social icon-circle icon-sm icon-instagram"><i class="bi bi-instagram"></i></a>
+                @endif
+                @if ($resturantsetting->snapchat)
+                    <a href="{{ $resturantsetting->snapchat }}"
+                        class="icon icon-social icon-circle icon-sm icon-snapchat"><i class="bi bi-snapchat"></i></a>
+                @endif
+                @if ($resturantsetting->tiktok)
+                    <a href="{{ $resturantsetting->tiktok }}"
+                        class="icon icon-social icon-circle icon-sm icon-tiktok"><i class="bi bi-tiktok"></i></a>
+                @endif
+                @if ($resturantsetting->whatsapp)
+                    <a href="{{ $resturantsetting->whatsapp }}"
+                        class="icon icon-social icon-circle icon-sm icon-whatsapp"><i class="bi bi-whatsapp"></i></a>
+                @endif
+                @if ($resturantsetting->youtube)
+                    <a href="{{ $resturantsetting->youtube }}"
+                        class="icon icon-social icon-circle icon-sm icon-youtube"><i class="bi bi-youtube"></i></a>
+                @endif
+
                 <br>
                 <a href="#" class="d-block" style="margin-top: 10px">
                     <img width="50px" src="{{ asset('assets/uploads/vat.svg') }}" alt="">
@@ -189,26 +212,19 @@
                 <h5 class="text-muted" style="margin-top: 15px"> روابط </h5>
                 <ul class="list-posts">
                     <li>
-                        <a href="{{ url('contact') }}" class="title contact"> اتصل بنا </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('terms') }}" class="title terms"> الشروط والاحكام </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('privacy-policy') }}" class="title privacy"> سياسة الخصوصية </a>
+                        @if (isset($restaurant))
+                            <a href="{{ route('restaurant.show', ['restaurant' => $restaurant->slug]) }}"
+                                class="title contact"> القائمة </a>
+                        @else
+                            <a href="{{ url('/') }}" class="title contact"> القائمة </a>
+                        @endif
                     </li>
                 </ul>
-                <div class="payments">
-                    <img src="{{ asset('assets/front/uploads/visa.png') }}">
-                    <img src="{{ asset('assets/front/uploads/master.png') }}">
-                    <img src="{{ asset('assets/front/uploads/mada.svg') }}">
-                    <img src="{{ asset('assets/front/uploads/urp.png') }}">
-                </div>
             </div>
         </div>
         <!-- Footer 2nd Row -->
         <div class="footer-second-row">
-            <span class="text-muted"> جميع الحقوق محفوظة لدي تراغيف بواسطة ... </span>
+            <span class="text-muted"> جميع الحقوق محفوظة لدي {{ $resturantsetting->name }} بواسطة Smart Menu </span>
         </div>
     </div>
 

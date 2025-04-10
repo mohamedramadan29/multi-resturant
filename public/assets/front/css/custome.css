@@ -13,11 +13,12 @@
 
 
 .hero_section {
-    background-size: contain;
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    min-height: 150px;
+    min-height: 400px;
     margin: 15px;
+    max-height: 80vh;
 
 }
 
@@ -154,7 +155,7 @@ a {
 .categories-container {
     position: relative;
     background: #fff;
-    z-index: 99;
+    z-index: 999;
     transition: all 0.3s ease-in-out;
     white-space: nowrap;
     overflow-x: auto;
@@ -355,12 +356,14 @@ a {
     color: #fff;
     margin-top: 26px;
 }
+
 @media(max-width:991px) {
     .branch-selector {
         justify-content: space-between;
     }
 }
-.branch-selector .mobile_logo{
+
+.branch-selector .mobile_logo {
     width: 60px;
 }
 
@@ -459,6 +462,7 @@ input[type="radio"]:checked+.branch-item .checkmark {
 .branch-item .icons i {
     font-size: 18px;
 }
+
 @media(max-width:991px) {
     .branch-selector {
         width: 75%;
@@ -531,11 +535,12 @@ input[type="radio"]:checked+.branch-item .checkmark {
     font-weight: bold;
 }
 
-.menu-grid-item{
+.menu-grid-item {
     position: relative;
     overflow: hidden;
 }
-.featured-badge{
+
+.featured-badge {
     position: absolute;
     top: 10px;
     right: -39px;
@@ -547,4 +552,38 @@ input[type="radio"]:checked+.branch-item .checkmark {
     transform: rotate(49deg);
     width: 126px;
     font-weight: bold;
+}
+
+/********* Desktop Header *********/
+
+.desktop-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.desktop-header .items-menu {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+}
+
+.desktop-header .items-menu a {
+    color: #000;
+    font-size: 18px;
+    font-weight: 500;
+    transition: 0.3s;
+
+}
+
+.desktop-header .module-logo img {}
+
+
+@media (max-width: 991px) {
+    #header-mobile {
+        display: block;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+    }
 }

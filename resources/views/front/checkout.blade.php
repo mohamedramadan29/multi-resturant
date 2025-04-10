@@ -114,7 +114,7 @@
                                         class="bi bi-person text-primary"></i> مراجعة البيانات
                                 </h4>
                                 <div class="row mb-5">
-                                    <div class="form-group col-sm-6">
+                                    {{-- <div class="form-group col-sm-6">
                                         <label> الاسم :</label>
                                         <input required type="text" class="form-control" name="name"
                                             value="{{ Auth::user()->name }}">
@@ -123,7 +123,7 @@
                                         <label> رقم الهاتف :</label>
                                         <input readonly type="text" class="form-control" name="phone"
                                             value="{{ Auth::user()->phone }}">
-                                    </div>
+                                    </div> --}}
                                     <div class="form-group col-sm-6">
                                         <label> ملاحظات : </label>
                                         <textarea name="notes" id="" cols="10" rows="4" class="form-control"></textarea>

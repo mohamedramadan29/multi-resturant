@@ -2,20 +2,25 @@
 
 namespace App\Http\Controllers\front;
 
-use App\Http\Controllers\Controller;
-use App\Models\admin\Category;
-use App\Models\admin\Product;
 use Illuminate\Http\Request;
+use App\Models\dashboard\Category;
+use App\Http\Controllers\Controller;
 
 class FrontController extends Controller
 {
-    public  function index()
+    public function index()
     {
-        $categories = Category::all()->map(function ($category){
-            $category->products = $category->products()->get();
-            return $category;
-        });
-       // dd($categories);
-        return view('front.index',compact('categories'));
+        $categories = Category::where('status', 1)
+            ->with(['products' => function($query) {
+                $query->where('status', 1); // لو تحب المنتجات تكون مفعلة أيضًا
+            }])
+            ->get()
+            ->filter(function ($category) {
+                return $category->products->isNotEmpty();
+            })
+            ->values(); // لإعادة ترتيب المفاتيح
+
+        return view('front.index', compact('categories'));
     }
+
 }

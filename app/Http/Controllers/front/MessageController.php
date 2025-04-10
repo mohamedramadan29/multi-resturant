@@ -2,20 +2,21 @@
 
 namespace App\Http\Controllers\front;
 
-use App\Models\front\Contact;
 use Illuminate\Http\Request;
+use App\Models\front\Contact;
 use App\Http\Traits\Message_Trait;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Models\dashboard\Resturant;
 use Illuminate\Support\Facades\Validator;
 
 class MessageController extends Controller
 {
     use Message_Trait;
 
-    public function index()
+    public function index(Resturant $restaurant)
     {
-        return view("front.contact");
+        return view("front.contact",compact('restaurant'));
     }
     public function store(Request $request)
     {

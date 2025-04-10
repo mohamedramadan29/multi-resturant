@@ -2,38 +2,42 @@
 
 namespace App\Http\Controllers\front;
 
-use App\Http\Controllers\Controller;
-use App\Http\Traits\Message_Trait;
-use App\Models\admin\ProductVariation;
-use App\Models\front\Cart;
 use Illuminate\Http\Request;
+use App\Models\front\Cart;
+use App\Http\Traits\Message_Trait;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\View;
+use App\Models\dashboard\ProductVartion;
+use App\Models\dashboard\Resturant;
 
 class CartController extends Controller
 {
     use Message_Trait;
 
-    public function cart()
+
+    public function cart(Resturant $restaurant)
     {
-        $cartItems = Cart::getcartitems();
+        // dd($restaurant);
+        $resturant_id = $restaurant->id;
+        $cartItems = Cart::getcartitems($resturant_id);
         $cartcount = $cartItems->count();
         return view('front.cart', compact('cartItems', 'cartcount'));
     }
 
-    public function add(Request $request)
+    public function add(Request $request, Resturant $restaurant)
     {
+        // dd($restaurant);
         $cartData = $request->all();
         $product_id = $request->input('product_id');
         $number = $request->input('number');
         $price = $request->input('price');
+        $resturant_id = $restaurant->id;
         $vartion_price = null;
         $vartion_size = null;
         $size = null;
         if ($request->has('size')) {
-            $vartion = ProductVariation::where('id', $request->input('size'))->first();
+            $vartion = ProductVartion::where('id', $request->input('size'))->first();
             $vartion_price = $vartion->price;
             $vartion_size = $vartion->size;
             $price = $vartion_price;
@@ -55,21 +59,21 @@ class CartController extends Controller
         // تحقق إذا كان المنتج موجودًا بالفعل في السلة
         if (Auth::check()) {
             $user_id = Auth::user()->id;
-            $cartItem = Cart::where(['product_id' => $product_id, 'user_id' => $user_id, 'size' => $size])->first();
+            $cartItem = Cart::where(['product_id' => $product_id, 'user_id' => $user_id, 'size' => $size, 'resturant_id' => $resturant_id])->first();
         } else {
             $user_id = 0;
             $cartItem = Cart::where('session_id', $session_id)
                 ->where('product_id', $product_id)
                 ->where('size', $size)
+                ->where('resturant_id', operator: $resturant_id)
                 ->first();
         }
-
         if ($cartItem) {
             // إذا كان المنتج موجودًا في السلة، يتم تحديث الكمية والسعر الإجمالي
             $cartItem->qty += $number;  // زيادة الكمية (يمكنك تعديلها حسب الحاجة)
             $cartItem->total_price = $cartItem->qty * $cartItem->price;  // تحديث السعر الإجمالي
             $cartItem->save();  // حفظ التحديثات
-             return $this->success_message(' تم تحديث المنتج في السلة  ');
+            return $this->success_message(' تم تحديث المنتج في السلة  ');
             // return response()->json([
             //     'message' => 'تم تحديث المنتج في السلة بنجاح',
             //     'cartCount' => Cart::where('session_id', $session_id)->count()  // إرسال العدد المحدث للسلة
@@ -80,6 +84,7 @@ class CartController extends Controller
         $item = new Cart();
         $item->session_id = $session_id;
         $item->user_id = $user_id;
+        $item->resturant_id = $resturant_id;
         $item->product_id = $product_id;
         $item->qty = $number;
         $item->price = $price;
@@ -119,10 +124,16 @@ class CartController extends Controller
         ]);
     }
 
-    public function delete($id)
+    // public function delete($id,Resturant $restaurant)
+    public function delete(Request $request, Resturant $restaurant, $id)
     {
+        // dd($restaurant);
         try {
             $item = Cart::findOrFail($id);
+            $resturant_id = $restaurant->id;
+            if ($item->resturant_id != $resturant_id) {
+                return $this->error_message(' لا يمكن حذف المنتج من سلة مطعم اخر  ');
+            }
             $item->delete();
             return $this->success_message(' تم حذف المنتج من سلة المشتريات  ');
         } catch (\Exception $e) {
@@ -130,8 +141,9 @@ class CartController extends Controller
         }
     }
 
-    public function updateCart(Request $request)
+    public function updateCart(Request $request,Resturant $restaurant)
     {
+        $restaurant_id = $restaurant->id;
         $cartItem = Cart::find($request->item_id); // إيجاد العنصر في السلة
         if ($cartItem) {
             $cartItem->qty = $request->quantity; // تحديث الكمية
@@ -142,7 +154,7 @@ class CartController extends Controller
             $itemTotal = $cartItem['total_price'];
 
             // حساب المجموع الفرعي (Subtotal)
-            $subtotal = Cart::getcartitems()->sum(function ($item) {
+            $subtotal = Cart::getcartitems($restaurant_id)->sum(function ($item) {
                 return $item['total_price'];
             });
             return response()->json([
@@ -152,91 +164,5 @@ class CartController extends Controller
         }
         return response()->json(['error' => 'Item not found'], 404);
     }
-
-
-    // Start Apply Coupon To Users
-    // public function apply_coupon(Request $request)
-    // {
-    //     if ($request->ajax()) {
-    //         $data = $request->all();
-    //         Session::forget('coupon_code');
-    //         Session::forget('coupon_amount');
-    //         // dd($data);
-    //         $cartItems = Cart::getcartitems();
-
-    //         //dd($cartItems);
-    //         $item_counts = $cartItems->count();
-
-    //         $couponCount = Coupon::where('coupon_code', $data['code'])->count();
-    //         if ($couponCount > 0) {
-    //             // Check Other Coupon Conditions
-    //             // Get the Coupon Data
-    //             $coupondata = Coupon::where('coupon_code', $data['code'])->first();
-    //             // check the code is active or not
-    //             if ($coupondata['status'] == 0) {
-    //                 $message = '  كود الخصم غير فعال ';
-    //             }
-    //             // check if this coupon is expired or not
-    //             $current_date = date("Y-m-d");
-    //             if ($coupondata['expire_date'] < $current_date) {
-    //                 $message = ['لقد انتهي وقت هذا الكود '];
-    //             }
-
-    //             // Check If this Coupon in selected Categories Or Not All Product
-    //             if ($coupondata['categories'] != 'all') {
-    //                 $catarray = explode(',', $coupondata['categories']);
-    //                 foreach ($cartItems as $key => $item) {
-    //                     if (!in_array($item['productdata']['category_id'], $catarray)) {
-    //                         $message = 'هذا الكود غير متاح مع هذه المنتجات ';
-    //                     }
-    //                 }
-    //             }
-    //             // Error Message Here
-    //             if (isset($message)) {
-    //                 return response()->json([
-    //                     'status' => 'false',
-    //                     'message' => $message,
-    //                     'View' => (string)View::make('front.partials.cart_items')->with(compact('cartItems', 'item_counts')),
-    //                 ]);
-    //             } else {
-    //                 $total_amount = 0;
-    //                 // Coupon Code Is Correct
-    //                 foreach ($cartItems as $item) {
-    //                     $price = floatval($item['price']); // تأكد من أن السعر رقم
-    //                     $qty = intval($item['qty']); // تأكد من أن الكمية رقم
-    //                     $sub_total = $price * $qty;
-    //                     $total_amount += $sub_total;
-    //                 }
-    //                 // Check If The Coupon Type Is Fixed Or Percentage
-
-    //                 if ($coupondata['amount_type'] == 'خصم ثابت') {
-    //                     $couponamount = $coupondata['amount'];
-    //                 } else {
-    //                     $couponamount = $total_amount * ($coupondata['amount'] / 100);
-    //                 }
-    //                 $grand_total = $total_amount - $couponamount;
-    //                 // Add Coupon Code And Amount In Session
-    //                 Session::put('coupon_code', $data['code']);
-    //                 Session::put('coupon_amount', $couponamount);
-    //                 $message = 'تم تطبيق الكوبون بنجاح ';
-    //                 return response()->json([
-    //                     'status' => true,
-    //                     'coupon_amount' => $couponamount,
-    //                     'grand_total' => $grand_total,
-    //                     'message' => $message,
-    //                     'View' => (string)View::make('front.partials.cart_items')->with(compact('cartItems', 'item_counts', 'couponamount', 'grand_total')),
-    //                 ]);
-    //             }
-
-    //         } else {
-    //             return response()->json([
-    //                 'status' => 'false',
-    //                 'message' => 'كود الخصم غير متاح ',
-    //                 'View' => (string)View::make('front.partials.cart_items')->with(compact('cartItems', 'item_counts')),
-    //             ]);
-    //         }
-    //     }
-    // }
-
 
 }

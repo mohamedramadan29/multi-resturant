@@ -46,9 +46,9 @@
                     </div>
                     <div class="col-xl-8 col-lg-7 order-lg-first">
                         <div class="bg-white p-4 p-md-5 mb-4">
-                            <h4 class="border-bottom pb-4"><i class="ti ti-user mr-3 text-primary"></i> تواصل معنا
+                            <h4 class="border-bottom pb-4"><i class="ti ti-user mr-3 text-primary"></i> تواصل معنا {{ $restaurant->name }}
                             </h4>
-                            <form action="{{ route('contact.store') }}" method="post">
+                            <form action="{{ route('contact.store',['restaurant' => $restaurant->slug]) }}" method="post">
                                 @csrf
                                 <div class="row mb-5">
                                     <div class="form-group col-sm-6">

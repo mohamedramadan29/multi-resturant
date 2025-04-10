@@ -1,26 +1,22 @@
-@php
-    $public_setting = \App\Models\admin\PublicSetting::first();
-@endphp
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+@php
 
+@endphp
 <head>
     <!-- Meta -->
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <!-- Title -->
-    <title> @yield('title') </title>
+    <title> {{ $resturantsetting->name }} </title>
 
     <!-- Favicons -->
-    <link rel="shortcut icon" href="{{ asset('assets/uploads/PublicSetting/' . $public_setting->website_logo) }}" />
-    <link rel="apple-touch-icon" href="{{ asset('assets/uploads/PublicSetting/' . $public_setting->website_logo) }}" />
-    <link rel="apple-touch-icon" sizes="76x76"
-        href="{{ asset('assets/uploads/PublicSetting/' . $public_setting->website_logo) }}" />
-    <link rel="apple-touch-icon" sizes="120x120"
-        href="{{ asset('assets/uploads/PublicSetting/' . $public_setting->website_logo) }}" />
-    <link rel="apple-touch-icon" sizes="152x152"
-        href="{{ asset('assets/uploads/PublicSetting/' . $public_setting->website_logo) }}" />
+    <link rel="shortcut icon" href="{{ $resturantsetting->getLogo() }}" />
+    <link rel="apple-touch-icon" href="{{ $resturantsetting->getLogo() }}" />
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ $resturantsetting->getLogo() }}" />
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ $resturantsetting->getLogo() }}" />
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ $resturantsetting->getLogo() }}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,19 +33,14 @@
     <link id="theme" rel="stylesheet" href="{{ asset('assets/front/css/theme-beige.css') }}" />
     <link rel="stylesheet" href="{{ asset('assets/front/css/custome.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}" />
+    {{-- <script src="https://js.pusher.com/8.4.0/pusher.min.js"></script> --}}
     <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
     <script>
         // Enable pusher logging - don't include this in production
         Pusher.logToConsole = true;
-
-        var pusher = new Pusher('707be48246a0581627c1', {
+        var pusher = new Pusher('c512adb58cdb4082ca36', {
             cluster: 'eu'
         });
-
-        // var channel = pusher.subscribe('my-channel');
-        // channel.bind('my-event', function(data) {
-        //     alert(JSON.stringify(data));
-        // });
     </script>
     @toastifyCss
     @yield('css')

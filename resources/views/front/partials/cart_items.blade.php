@@ -9,7 +9,7 @@
         <div class="panel-cart-content cart-details">
             @php
                 $session_id = \Illuminate\Support\Facades\Session::get('session_id');
-                $cartItems = App\Models\front\Cart::getcartitems();
+                $cartItems = App\Models\front\Cart::getcartitems($resturantsetting->resturant_id);
                 $total_price = 0;
             @endphp
 
@@ -25,11 +25,11 @@
                                     </a></span>
                                 <span class="caption text-muted"> {{ $item['productdata']['name'] }} </span>
                                 @if ($item['size'])
-                                <span class="caption badge badge-danger"> {{ $item['size'] }} </span>
-                            @endif
+                                    <span class="caption badge badge-danger"> {{ $item['size'] }} </span>
+                                @endif
                             </td>
                             <td class="price cart-total1" data-id="{{ $item['id'] }}">
-                                {{ number_format($item['total_price'], 2) }} </td>
+                                {{ number_format($item['total_price']) }} </td>
                             <td class="actions">
                                 <div class="tf-mini-cart-btns">
                                     <div class="wg-quantity small">
@@ -39,7 +39,8 @@
                                         <span class="btn-quantity plus-btn" data-id="{{ $item['id'] }}">+</span>
                                     </div>
                                 </div>
-                                <form method="post" action="{{ url('cart/delete/' . $item['id']) }}">
+                                <form method="post"
+                                    action="{{ route('cart.delete', ['id' => $item['id'], 'restaurant' => $restaurant->slug]) }}">
                                     @csrf
                                     <input type="hidden" name="item_id" value="{{ $item['id'] }}">
                                     <button type="submit" class="tf-mini-cart-remove"><i
@@ -53,7 +54,7 @@
                     {{-- <div class="row">
                         <div class="col-7 text-right text-muted"> المجموع الفرعي :</div>
                         <div class="col-5">
-                            <strong> <span class="cart-products-total1"> {{ number_format($total_price, 2) }} </span> ريال
+                            <strong> <span class="cart-products-total1"> {{ number_format($total_price, 2) }} </span> د.ع
                             </strong>
                         </div>
                     </div> --}}
@@ -66,13 +67,15 @@
                     <div class="row text-lg">
                         <div class="col-7 text-right text-muted"> الاجمالي :</div>
                         <div class="col-5">
-                            <strong> <span class="cart-total1 total-value">{{ number_format($total_price, 2) }}</span>
-                                ريال
+                            <strong> <span class="cart-total1 total-value">{{ number_format($total_price) }}</span>
+                                د.ع
                             </strong>
                         </div>
                     </div>
-                    <a
-                        href="{{ url('checkout') }}" class="btn btn-primary checkout_button complete_order">إتمام الطلب</a>
+                    {{-- <a href="{{ route('checkout',['restaurant' => $restaurant->slug]) }}" class="btn btn-primary checkout_button complete_order">إتمام
+                        الطلب</a> --}}
+                        <a href="{{ route('checkout',['restaurant' => $restaurant->slug]) }}" class="btn btn-primary complete_order">إتمام
+                            الطلب</a>
                 </div>
             @else
                 <div class="cart-empty">
@@ -85,8 +88,9 @@
     </div>
 </div>
 
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script>
+
     $(document).ready(function() {
         // زيادة الكمية عند الضغط على الزر +
         $('.plus-btn').off('click').on('click', function(e) {
@@ -123,7 +127,8 @@
         // تحديث الكمية في السلة
         function updateCart(itemId, newQuantity) {
             $.ajax({
-                url: '/cart/update',
+                //url: '/cart/update',
+                url: '/' + "{{ $restaurant->slug }}" + '/cart/update',
                 method: 'POST',
                 data: {
                     "_token": "{{ csrf_token() }}", // تأكيد الحماية ضد CSRF

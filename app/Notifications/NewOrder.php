@@ -46,7 +46,7 @@ class NewOrder extends Notification
         return [
             'order_id' => $this->order_id,
             'title' => ' طلب جديد علي الموقع الالكتروني ::  ',
-            'url' => url('admin/order/update/' . $this->order_id),
+            'url' => url('dashboard/orders/update/' . $this->order_id),
         ];
     }
 
@@ -55,13 +55,13 @@ class NewOrder extends Notification
         return [
             'order_id' => $this->order_id,
             'title' => ' طلب جديد علي الموقع الالكتروني ::  ',
-            'url' => url('admin/order/update/' . $this->order_id),
+            'url' => url('dashboard/orders/update/' . $this->order_id),
         ];
     }
 
     /////// Change Channel Name
      public function broadcastType()
      {
-        return 'App.Models.admin.' . $this->order_id;
+        return 'App.Models.dashboard.Admin.' . $this->order_id;
      }
 }

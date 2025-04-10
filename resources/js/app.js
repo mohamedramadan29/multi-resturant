@@ -1,36 +1,26 @@
 import './bootstrap';
-
-// window.Echo.private('App.Models.admin.admin.' + admin_id)
-//     .listen('Illuminate\Notifications\Events\BroadcastNotificationCreated', (event) => {
-//         alert(event.title);
-//         // alert('test event');
-//     });
-
-Echo.private('App.Models.admin.admin.' + admin_id)
+Echo.private('App.Models.dashboard.Admin.' + admin_id)
     .notification((event) => {
         $('.notification-dropdown').append(`
-        <a href="${event.url}"
-                class="dropdown-item py-3 border-bottom text-wrap">
-                <div class="d-flex">
-                    <div class="flex-shrink-0">
-                        <i class="fa fa-bell text-primary"></i>
+            <a  href="${event.url}">
+                <div class="media">
+                    <div class="media-left align-self-center">
+                        <i class="ft-bell icon-bg-circle bg-cyan"></i>
                     </div>
-                    <div class="flex-grow-1">
-                        <p class="mb-0"><span class="fw-medium">
-                                طلب
-                                جديد </span>
-                            <br>
+                    <div class="media-body">
+                        <h6 class="media-heading">
+                            طلب جديد
                             <span>
-                                ${event.title}
+                                    ${event.title}
                                 رقم
                                 الطلب :
                                 ${event.order_id}
                             </span>
-                        </p>
+                        </h6>
                     </div>
                 </div>
             </a>
-       `);
+    `);
         var unreadnotification = parseInt($('#unread').text());
         $('#unread').text(unreadnotification + 1);
         // تشغيل صوت الإشعار

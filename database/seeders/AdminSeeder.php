@@ -2,10 +2,11 @@
 
 namespace Database\Seeders;
 
-use App\Models\admin\admin;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\dashboard\Role;
+use App\Models\dashboard\Admin;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 class AdminSeeder extends Seeder
 {
@@ -14,14 +15,14 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $admin = new admin();
-        $admin->create([
-            'name'=>'Mohamed',
-            'account_type'=>'admin',
-            'email'=>'mr319242@gmail.com',
-            'phone'=>'0000000',
-            'password'=>Hash::make('11111111'),
-            'status'=>1,
+        $first_role_id = Role::first()->id;
+        $admin = Admin::create([
+            "name"=> "mohamed",
+            "email"=> "mr319242@gmail.com",
+            'phone' => '01000000000',
+            "password"=> bcrypt("11111111"),
+            'type'=>'superadmin',
+            'role_id' => $first_role_id
         ]);
     }
 }

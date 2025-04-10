@@ -23,7 +23,8 @@ class User extends Authenticatable
         'password',
         'verification_code',
         'expires_at',
-        'phone'
+        'phone',
+        'resturant_id'
     ];
 
     /**

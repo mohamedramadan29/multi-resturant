@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Broadcast;
 //     return (int) $user->id === (int) $id;
 // });
 
-Broadcast::channel('App.Models.admin.admin.{id}', function ($admin, $id) {
+Broadcast::channel('App.Models.dashboard.Admin.{id}', function ($admin, $id) {
     return (int) Auth::guard('admin')->user()->id === (int) $id;
 }, ['guards' => ['admin']]); // تأكد من تحديد الـ guard
 
