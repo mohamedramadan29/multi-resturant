@@ -21,4 +21,8 @@ class Order extends Model
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
+    public function shippingarea()
+    {
+        return $this->belongsTo(ShippingArea::class, 'area');
+    }
 }

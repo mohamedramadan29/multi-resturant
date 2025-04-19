@@ -86,6 +86,14 @@
                                                 </tr>
                                             @endforeach
                                             <tr>
+                                                <td colspan="3"> قيمة الشحن </td>
+                                                <td colspan="2">
+                                                    <strong class="text-danger">
+                                                        {{ number_format($order['shipping_price'], 2) }} </strong>
+
+
+                                            </tr>
+                                            <tr>
                                                 <td colspan="3"> السعر الكلي </td>
                                                 <td colspan="2">
                                                     <strong class="text-danger">

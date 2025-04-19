@@ -35,7 +35,6 @@
                                 $cartItems = App\Models\front\Cart::getcartitems($resturantsetting->resturant_id);
                                 $total_price = 0;
                             @endphp
-
                             <div class="bg-dark dark p-4">
                                 <h5 class="mb-0"> مراجعة الطلب </h5>
                             </div>
@@ -78,18 +77,23 @@
                                     @endforeach
                                 </table>
                                 <div class="cart-summary1">
-                                    {{-- <div class="row">
-                                    <div class="col-7 text-right text-muted">Order total:</div>
-                                    <div class="col-5"><strong>$<span class="cart-products-total">0.00</span></strong>
+                                    <div class="row" id="shipping_value" style="display: none">
+                                        <div class="col-7 text-right text-muted"> قيمة الشحن :</div>
+                                        <div class="col-5"><strong><span class="cart-delivery"
+                                                    id="shipping_price">0.00</span> د.ع </strong></div>
                                     </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-7 text-right text-muted">Devliery:</div>
-                                    <div class="col-5"><strong>$<span class="cart-delivery">0.00</span></strong></div>
-                                </div> --}}
                                     <hr class="hr-sm">
-                                    <div class="row text-lg">
-                                        <div class="col-7 text-right text-muted"> الاجمالي :</div>
+                                    <div class="row text-lg" id="shipping_value_total" style="display: none">
+                                        <div class="col-7 text-right text-muted">  الاجمالي :</div>
+                                        <div class="col-5">
+                                            <strong> <span
+                                                    class="cart-total1 total-value" id="shipping_price_total">{{ number_format($total_price) }}</span>
+                                                د.ع
+                                            </strong>
+                                        </div>
+                                    </div>
+                                    <div class="row text-lg" id="inside_total" style="display: none">
+                                        <div class="col-7 text-right text-muted"> الاجمالي  :</div>
                                         <div class="col-5">
                                             <strong> <span
                                                     class="cart-total1 total-value">{{ number_format($total_price) }}</span>
@@ -107,35 +111,62 @@
                         </div>
                     </div>
                     <div class="col-xl-8 col-lg-7 order-lg-first">
-                        <form method="post" action="{{ route('order.store',['restaurant' => $restaurant->slug]) }}">
+                        <form method="post" action="{{ route('order.store', ['restaurant' => $restaurant->slug]) }}">
                             @csrf
                             <div class="bg-white p-4 p-md-5 mb-4">
                                 <h4 class="border-bottom pb-4" style="font-weight: 500"><i
                                         class="bi bi-person text-primary"></i> مراجعة البيانات
                                 </h4>
-                                <div class="row mb-5">
-                                    {{-- <div class="form-group col-sm-6">
-                                        <label> الاسم : <span class="text-danger"> * </span> </label>
-                                        <input required type="text" class="form-control" name="name"
-                                            value="{{ Auth::user()->name }}">
-                                    </div>
-                                    <div class="form-group col-sm-6">
-                                        <label> رقم الهاتف : <span class="text-danger"> * </span></label>
-                                        <input readonly type="text" class="form-control" name="phone"
-                                            value="{{ Auth::user()->phone }}">
-                                    </div> --}}
-                                    <div class="form-group col-sm-6">
-                                        <label> رقم الطاولة  : <span class="text-danger"> * </span> </label>
-                                        <input required type="number" class="form-control" name="table_number"
-                                            value="{{ old('table_number') }}">
-                                    </div>
-                                    <div class="form-group col-sm-6">
-                                        <label> ملاحظات : </label>
-                                        <textarea name="notes" id="" cols="10" rows="4" class="form-control"></textarea>
+                                <div class="form-group col-12">
+                                    <label> حدد طريقة الاستلام : <span class="text-danger"> * </span> </label>
+                                    <select required id="payment_type" name="payment_type"
+                                        class="form-select form-control select2">
+                                        <option value="" selected disabled> -- حدد طريقة الاستلام -- </option>
+                                        <option value="delivery"> توصيل </option>
+                                        <option value="inside"> من داخل المطعم </option>
+                                    </select>
+                                </div>
+                                <div id="delivery" style="display: none">
+                                    <div class="row mb-5">
+                                        <div class="form-group col-12">
+                                            <label> الاسم : <span class="text-danger"> * </span> </label>
+                                            <input type="text" class="form-control" name="name"
+                                                value="{{ old('name') }}">
+                                        </div>
+                                        <div class="form-group col-12">
+                                            <label> رقم الهاتف : <span class="text-danger"> * </span></label>
+                                            <input type="text" class="form-control" name="phone"
+                                                value="{{ old('phone') }}">
+                                        </div>
+                                        <div class="form-group col-12">
+                                            <label> حدد منطقة التوصيل : <span class="text-danger"> * </span> </label>
+                                            <select id="select_area" name="area"
+                                                class="form-select form-control select2">
+                                                <option value="" selected disabled> -- حدد منطقة التوصيل -- </option>
+                                                @foreach ($areas as $area)
+                                                    <option value="{{ $area->id }}">{{ $area->area }}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
+                                        <div class="form-group col-12">
+                                            <label> العنوان كاملا : </label>
+                                            <textarea name="address" id="" cols="10" rows="4" class="form-control"></textarea>
+                                        </div>
                                     </div>
                                 </div>
-
-
+                                <div id="inside" style="display: none">
+                                    <div class="row mb-5">
+                                        <div class="form-group col-12">
+                                            <label> رقم الطاولة : <span class="text-danger"> * </span> </label>
+                                            <input type="number" class="form-control" name="table_number"
+                                                value="{{ old('table_number') }}">
+                                        </div>
+                                        <div class="form-group col-12">
+                                            <label> ملاحظات : </label>
+                                            <textarea name="notes" id="" cols="10" rows="4" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                             <div class="text-center">
                                 <button class="btn btn-primary btn-lg"><span> ارسال الطلب </span></button>
@@ -211,5 +242,43 @@
                     });
                 }
             });
+        </script>
+        <script>
+            $(document).ready(function() {
+                $("#payment_type").change(function() {
+                    var paymentType = $(this).val();
+                    if (paymentType === "delivery") {
+                        $("#inside").hide();
+                        $("#delivery").show();
+                        $("#shipping_value").show();
+                        $("#shipping_value_total").show();
+                        $("#inside_total").hide();
+                    } else {
+                        $("#inside").show();
+                        $("#inside_total").show();
+                        $("#shipping_value").hide();
+                        $("#shipping_value_total").hide();
+                        $("#delivery").hide();
+
+                    }
+                });
+                $("#select_area").change(function() {
+                    var area_id = $(this).val();
+
+                    let restaurantSlug = "{{ $restaurant->slug }}";
+                    $.ajax({
+                        //url: "{{ url('/select_area') }}/" + area_id,
+                        url: "/" + restaurantSlug + "/select_area/" + area_id,
+                        method: 'GET',
+                        data: area_id,
+                        success: function(response) {
+                            $("#shipping_price").text(response.shipping_price);
+                            $("#shipping_price_total").text(response.shipping_price_total);
+
+                            //console.log(response);
+                        }
+                    });
+                })
+            })
         </script>
     @endsection

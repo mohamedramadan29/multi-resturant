@@ -29,6 +29,36 @@
                                 </div>
                                 <div class="card-body">
                                     <div class="row">
+                                        @if($order['payment_type'] == 'delivery')
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label for="name" class="form-label"> الاسم  </label>
+                                                <input disabled required type="text" id="name" class="form-control"
+                                                    name="name" value="{{ $order["name"] }}">
+                                            </div>
+                                        </div>
+                                         <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label for="phone" class="form-label"> رقم الهاتف   </label>
+                                                <input disabled required type="text" id="phone" class="form-control"
+                                                    name="phone" value="{{ $order["phone"] }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label for="area" class="form-label">  المنطقة  </label>
+                                                <input disabled required type="text" id="area" class="form-control"
+                                                    name="area" value="{{ $order->shippingarea["area"] }}">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6">
+                                            <div class="mb-3">
+                                                <label for="address" class="form-label">  العنوان كاملا   </label>
+                                                <input disabled required type="text" id="address" class="form-control"
+                                                    name="address" value="{{ $order->address}}">
+                                            </div>
+                                        </div>
+                                        @else
                                         <div class="col-lg-6">
                                             <div class="mb-3">
                                                 <label for="name" class="form-label"> رقم الطاولة </label>
@@ -36,6 +66,8 @@
                                                     name="name" value="{{ $order['table_number'] }}">
                                             </div>
                                         </div>
+                                        @endif
+
                                         <div class="col-lg-12">
                                             <div class="mb-3">
                                                 <label for="name" class="form-label"> ملاحظات </label>

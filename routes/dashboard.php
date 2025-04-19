@@ -1,18 +1,19 @@
 <?php
-use App\Http\Controllers\dashboard\OrderController;
-use App\Http\Controllers\dashboard\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\dashboard\AdminController;
+use App\Http\Controllers\dashboard\OrderController;
 use App\Http\Controllers\dashboard\RolesController;
+use App\Http\Controllers\dashboard\VideoController;
+use App\Http\Controllers\dashboard\ProductController;
+use App\Http\Controllers\dashboard\SettingController;
 use App\Http\Controllers\dashboard\WelcomeController;
+use App\Http\Controllers\dashboard\ShippingController;
 use App\Http\Controllers\dashboard\auth\AuthController;
+use App\Http\Controllers\dashboard\ResturantController;
+use App\Http\Controllers\dashboard\CategoriesController;
 use App\Http\Controllers\dashboard\NotificationController;
 use App\Http\Controllers\dashboard\auth\ResetPasswordController;
 use App\Http\Controllers\dashboard\auth\ForgetPasswordController;
-use App\Http\Controllers\dashboard\CategoriesController;
-use App\Http\Controllers\dashboard\ResturantController;
-use App\Http\Controllers\dashboard\SettingController;
-use App\Http\Controllers\dashboard\VideoController;
 
 Route::group([
     'prefix' => '/dashboard',
@@ -153,5 +154,15 @@ Route::group([
             });
         });
         ################### End Settings  Routes ###########################
+        ################### Start Shipping Controller ######################
+        Route::group(['middleware' => 'can:admin', 'prefix' => 'shipping', 'as' => 'shipping.'], function () {
+            Route::controller(ShippingController::class)->group(function () {
+                Route::get('index', 'index')->name('index');
+                Route::match(['get', 'post'], 'create', 'create')->name('create');
+                Route::match(['post', 'get'], 'update/{id}', 'update')->name('update');
+                Route::post('destroy/{id}', 'destroy')->name('destroy');
+            });
+        });
+        ################## End Shipping Controller ########################
     });
 });

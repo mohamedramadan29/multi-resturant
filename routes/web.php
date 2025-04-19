@@ -58,6 +58,7 @@ Route::prefix('/{restaurant:slug}')->group(function () {
         Route::controller(CheckoutController::class)->group(function () {
             Route::get('checkout', 'checkout')->name('checkout');
             Route::get('/get-shipping-price', 'getShippingPrice');
+            Route::get('select_area/{id}', 'selectArea')->name('select.area');
         });
     //});
 });

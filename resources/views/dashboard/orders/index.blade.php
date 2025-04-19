@@ -50,8 +50,9 @@ orders
                                                     <th> رقم الطلب </th>
                                                     <th> اسم العميل </th>
                                                     <th> رقم الهاتف </th>
+                                                    <th> طريقة الاستلام  </th>
 
-                                                    {{-- <th> قيمة الشحن   </th> --}}
+                                                    <th> قيمة الشحن   </th>
                                                     <th> الاجمالي </th>
                                                     {{-- <th> حالة الطلب </th> --}}
                                                     <th> العمليات</th>
@@ -65,9 +66,16 @@ orders
                                                         </td>
                                                         <td> {{ $order['name'] }} </td>
                                                         <td> {{ $order['phone'] }} </td>
+                                                        <td>
+                                                            @if($order['payment_type'] == 'delivery')
+                                                                <span class="badge badge-info bg-info"> توصيل </span>
+                                                                @else
+                                                                <span class="badge badge-info bg-success"> استلام داخل المطعم </span>
+                                                            @endif
+                                                            </td>
 
-                                                        {{-- <td> {{$order['shipping_price']}} </td> --}}
-                                                        <td> {{ $order['grand_total'] }} </td>
+                                                        <td> {{$order['shipping_price']}} د.ع </td>
+                                                        <td> {{ $order['grand_total'] }} د.ع </td>
                                                         {{-- <td>
                                                             @if ($order['order_status'] == 'لم يبدا')
                                                                 <span class="badge badge-info bg-warning">

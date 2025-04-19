@@ -16,6 +16,7 @@ use App\Models\dashboard\Resturant;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Models\dashboard\OrderDetails;
+use App\Models\dashboard\ShippingArea;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Validator;
@@ -43,18 +44,38 @@ class OrderController extends Controller
             $total_price = Cart::getcarttotal($resturant_id);
             // dd($total_price);
             $rules = [
-               // 'name' => 'required',
-               // 'phone' => 'required',
-                'table_number' => 'required|integer',
-
+                // 'name' => 'required',
+                // 'phone' => 'required',
+                'payment_type' => 'required',
+                //  'table_number' => 'required|integer',
             ];
+            if ($data['payment_type'] == 'delivery') {
+                $rules['name'] = 'required|string';
+                $rules['phone'] = 'required';
+                $rules['area'] = 'required';
+                $rules['address'] = 'required';
+            }
+            if ($data['payment_type'] == 'inside') {
+                $rules['table_number'] = 'required|integer';
+            }
             $messages = [
-              //  'name.required' => ' من فضلك ادخل الاسم  ',
-               // 'phone.required' => ' من فضلك ادخل رقم الهاتف  ',
+                //  'name.required' => ' من فضلك ادخل الاسم  ',
+                // 'phone.required' => ' من فضلك ادخل رقم الهاتف  ',
                 'table_number.required' => ' من فضلك ادخل رقم الطاولة  ',
                 'table_number.integer' => ' رقم الطاولة يجب ان يكون رقم صحيح  ',
+                'payment_type.required' => ' من فضلك اختر طريقة استلام الطلب   ',
+                'name.required' => ' من فضلك ادخل الاسم  ',
+                'phone.required' => ' من فضلك ادخل رقم الهاتف  ',
+                'area.required' => ' من فضلك ادخل المنطقة  ',
+                'address.required' => ' من فضلك ادخل العنوان  ',
             ];
-
+            if($data['payment_type'] == 'delivery'){
+                $shipping_area = ShippingArea::find($data['area']);
+                $shipping_price = $shipping_area->price;
+                $total_price = $total_price + $shipping_price;
+            }else{
+                $shipping_price = 0;
+            }
             $validator = Validator::make($data, $rules, $messages);
             if ($validator->fails()) {
                 return Redirect::back()->withInput()->withErrors($validator);
@@ -63,8 +84,6 @@ class OrderController extends Controller
             $order = new Order();
             $order->user_id = null;
             $order->resturant_id = $resturant_id;
-           // $order->name = $data['name'];
-           // $order->phone = $data['phone'];
             $order->table_number = $data['table_number'];
             $order->notes = $data['notes'];
             $order->time_delivery = 'now';
@@ -72,10 +91,16 @@ class OrderController extends Controller
             $order->coupon_code = $coupon;
             $order->coupon_amount = $coupon_amount;
             $order->order_status = 'لم يبدا';
+            $order->name = $data['name']??null;
+            $order->phone = $data['phone']??null;
+            $order->area = $data['area']??null;
+            $order->address = $data['address']??null;
+            $order->payment_type = $data['payment_type'];
+            $order->shipping_price = $shipping_price;
             $order->grand_total = $total_price;
             $order->save();
-           // $user->name = $data['name'];
-           // $user->save();
+            // $user->name = $data['name'];
+            // $user->save();
             //  dd($order->id);
 
             foreach ($cartItems as $item) {
@@ -114,7 +139,7 @@ class OrderController extends Controller
         $session_id = Session::get('session_id');
         if (Session::has('order_id')) {
             // Empty The Cart
-           // Cart::where('user_id', Auth::user()->id)->orWhere('session_id', $session_id)->delete();
+            // Cart::where('user_id', Auth::user()->id)->orWhere('session_id', $session_id)->delete();
             Cart::Where('session_id', $session_id)->delete();
             return view('front.restaurants.thanks');
         } else {

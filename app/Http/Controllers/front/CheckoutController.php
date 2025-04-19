@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\front;
+use App\Models\dashboard\ShippingArea;
 use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,13 +18,23 @@ class CheckoutController extends Controller
     {
         $resturant_id = $restaurant->id;
         $cartItems = Cart::getcartitems($resturant_id);
+        $areas = ShippingArea::where('resturant_id', $resturant_id)->get();
         if (count($cartItems) > 0) {
-            return view("front.restaurants.checkout");
+            return view("front.restaurants.checkout",compact('areas'));
         } else {
             return redirect()->route('restaurant.show', ['restaurant' => $restaurant->slug]);
         }
     }
 
+    public function selectArea(Resturant $restaurant,$id){
+        $area = ShippingArea::find($id);
+        $shipping_price = $area->price;
+        $resturant_id = $restaurant->id;
+        $total_price = Cart::getcarttotal($resturant_id);
+        $shipping_price_total = $shipping_price  + $total_price;
+      //  dd($area);
+        return response()->json(['shipping_price' => $shipping_price, 'shipping_price_total' => $shipping_price_total]);
+    }
 
     // التحقق من حالة تسجيل الدخول
     // public function checkLoginStatus()

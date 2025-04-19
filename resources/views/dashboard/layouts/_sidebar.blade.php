@@ -91,6 +91,24 @@
                       </ul>
                   </li>
               @endcan
+              @can('admin')
+              <li class="nav-item{{ Route::is('dashboard.shipping.*') ? 'active' : '' }}"><a href="#"><i
+                          class="bi bi-truck"></i><span class="menu-title" data-i18n="nav.users.main"> ادارة مناطق الشحن
+                      </span></a>
+                  <ul class="menu-content">
+                      <li class="{{ Route::is('dashboard.shipping.index') ? 'active' : '' }}">
+                          <a class="menu-item" href="{{ route('dashboard.shipping.index') }}"
+                              data-i18n="nav.users.user_profile"> ادارة مناطق الشحن
+                          </a>
+                      </li>
+                      <li class="{{ Route::is('dashboard.shipping.create') ? 'active' : '' }}">
+                        <a class="menu-item" href="{{ route('dashboard.shipping.create') }}"
+                            data-i18n="nav.users.user_profile">  اضافة منطقة شحن
+                        </a>
+                    </li>
+                  </ul>
+              </li>
+          @endcan
               @can('roles')
                   <li class="nav-item {{ Route::is('dashboard.roles.*') ? 'active' : '' }}"><a href="#"><i
                               class="la la-television"></i><span class="menu-title" data-i18n="nav.role.main"> الصلاحيات
